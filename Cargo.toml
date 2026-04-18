@@ -1,0 +1,81 @@
+[package]
+name = "dragon-world"
+version = "0.1.0"
+edition = "2024"
+description = "Sandbox #1 — foundation for a 3D MMO RPG"
+
+[dependencies]
+# Narrow feature set: X11 only (WSLg supports it), no audio, no wayland —
+# minimizes system library dependencies on the dev machine.
+bevy = { version = "0.18", default-features = false, features = [
+    "multi_threaded",
+    "bevy_winit",
+    "x11",
+    "bevy_render",
+    "bevy_core_pipeline",
+    "bevy_pbr",
+    "bevy_anti_alias",
+    "bevy_audio",
+    "bevy_post_process",
+    "vorbis",
+    "wav",
+    "symphonia-aac",
+    "symphonia-isomp4",
+    "bevy_asset",
+    "bevy_scene",
+    "bevy_gltf",
+    "bevy_ui",
+    "bevy_ui_render",
+    "bevy_text",
+    "bevy_gizmos",
+    "bevy_picking",
+    "bevy_state",
+    "default_font",
+    "tonemapping_luts",
+    "smaa_luts",
+    "ktx2",
+    "zstd_rust",
+    "png",
+    "hdr",
+    "jpeg",
+    "bevy_dev_tools",
+] }
+bevy_rapier3d = "0.33"
+# Direct rodio dep so we can probe whether a music file is decodable
+# (and catch rodio's unreachable-on-seek-error panic) before handing
+# the bytes to Bevy's audio play system.
+rodio = { version = "0.20", default-features = false }
+# Used to decode the M4A music ourselves and re-encode it as WAV in
+# memory — rodio's wrapper around symphonia panics on this particular
+# M4A variant.
+symphonia = { version = "0.5", default-features = false, features = ["aac", "isomp4", "mp3"] }
+bevy-inspector-egui = { version = "0.36", default-features = false, features = [
+    "documentation",
+    "bevy_core_pipeline",
+    "bevy_image",
+    "bevy_pbr",
+    "bevy_render",
+    "egui_clipboard",
+] }
+noise = "0.9"
+
+# Faster dev builds — keep heavy optimization for dependencies only.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+# LTO + single codegen unit makes runtime faster but link slower (5-15 min
+# on Windows MSVC for a Bevy binary). For iteration we prefer a fast link —
+# use `cargo build --profile release-fast`. Ship with `--release` when you
+# want the final build.
+lto = "thin"
+codegen-units = 1
+
+# Iterate quickly while still having release-level optimizations.
+[profile.release-fast]
+inherits = "release"
+lto = false
+codegen-units = 16
