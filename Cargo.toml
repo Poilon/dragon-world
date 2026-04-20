@@ -5,12 +5,10 @@ edition = "2024"
 description = "Sandbox #1 — foundation for a 3D MMO RPG"
 
 [dependencies]
-# Narrow feature set: X11 only (WSLg supports it), no audio, no wayland —
-# minimizes system library dependencies on the dev machine.
+# Narrow feature set — native windowing on macOS (Cocoa/Metal), no x11/wayland needed.
 bevy = { version = "0.18", default-features = false, features = [
     "multi_threaded",
     "bevy_winit",
-    "x11",
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_pbr",

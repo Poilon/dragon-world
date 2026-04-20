@@ -77,8 +77,8 @@ fn spawn_sun(mut commands: Commands) {
         Transform::from_xyz(20.0, 40.0, 10.0)
             .looking_at(Vec3::ZERO, Vec3::Y),
         CascadeShadowConfigBuilder {
-            first_cascade_far_bound: 20.0,
-            maximum_distance: 200.0,
+            first_cascade_far_bound: 15.0,
+            maximum_distance: 80.0,
             ..default()
         }
         .build(),

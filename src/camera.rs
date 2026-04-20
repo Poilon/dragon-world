@@ -120,12 +120,12 @@ fn spawn_camera(mut commands: Commands, mut media: ResMut<Assets<ScatteringMediu
         AtmosphereSettings::default(),
         // Grounding contact shadows in crevices, under the hero's chin, etc.
         ScreenSpaceAmbientOcclusion {
-            quality_level: ScreenSpaceAmbientOcclusionQualityLevel::High,
+            quality_level: ScreenSpaceAmbientOcclusionQualityLevel::Low,
             ..default()
         },
         // SMAA: cheap, no motion vectors required, works well with SSAO.
         Smaa {
-            preset: SmaaPreset::High,
+            preset: SmaaPreset::Low,
         },
         OrbitCamera::default(),
         Name::new("OrbitCamera"),

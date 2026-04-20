@@ -769,7 +769,7 @@ fn spawn_fireplace(
             color: Color::srgb(1.0, 0.55, 0.22),
             intensity: 130_000.0,
             range: 18.0,
-            shadows_enabled: true,
+            shadows_enabled: false,
             ..default()
         },
         Transform::from_translation(place.world(fire_local + Vec3::Y * 0.15)),

@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use noise::{NoiseFn, Perlin};
 
+use crate::player::Player;
 use crate::world::{terrain_height_at, LAKE_CENTER, LAKE_RADIUS};
 
 // --- Placement parameters ----------------------------------------------------
@@ -505,9 +506,24 @@ fn spawn_bush(
 
 // --- Wind --------------------------------------------------------------------
 
-fn animate_wind(time: Res<Time>, mut q: Query<(&WindSway, &mut Transform)>) {
+fn animate_wind(
+    time: Res<Time>,
+    player_q: Query<&Transform, (With<Player>, Without<WindSway>)>,
+    mut q: Query<(&WindSway, &mut Transform), Without<Player>>,
+) {
+    // Trees farther than this from the player are culled from the wind
+    // animation — the sway is imperceptible at distance and propagating
+    // Transform changes through Bevy's hierarchy isn't free.
+    const MAX_ANIMATE_DIST_SQ: f32 = 80.0 * 80.0;
+    let Ok(player_tf) = player_q.single() else {
+        return;
+    };
+    let player_pos = player_tf.translation;
     let t = time.elapsed_secs();
     for (sway, mut tf) in &mut q {
+        if tf.translation.distance_squared(player_pos) > MAX_ANIMATE_DIST_SQ {
+            continue;
+        }
         // Two incommensurate sines give each tree an irregular sway.
         let tilt_x = (t * 0.7 + sway.phase).sin() * sway.amplitude;
         let tilt_z = (t * 0.9 + sway.phase * 1.3).cos() * sway.amplitude;

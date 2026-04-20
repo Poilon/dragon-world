@@ -72,7 +72,7 @@ fn main() {
         // (lit only by sun through windows + this) reads cleanly.
         .insert_resource(GlobalAmbientLight {
             color: Color::srgb(0.82, 0.88, 0.98),
-            brightness: 7500.0,
+            brightness: 3500.0,
             ..default()
         })
         .init_resource::<DebugFlags>()
